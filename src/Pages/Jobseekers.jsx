@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "../Redux/userSlice";
 import Loading from "../Components/Loading";
 import Usercard from "../Components/Usercard";
+import ReactPaginate from "react-paginate";
+import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 
 const Jobseekers = () => {
   const dispatch = useDispatch();
@@ -61,6 +63,17 @@ const Jobseekers = () => {
     return filtered;
   };
 
+  const [itemOffset, setItemOffset] = useState(0);
+  const itemsPerPage = 15;
+  const endOffset = itemOffset + itemsPerPage;
+  const currentItems = filteredElements().slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(filteredElements().length / itemsPerPage);
+
+  const handlePageClick = (selected) => {
+    const newOffset = (selected * itemsPerPage) % filteredElements().length;
+    setItemOffset(newOffset);
+  };
+
   useEffect(() => {
     dispatch(getUsers());
   }, [dispatch]);
@@ -81,25 +94,24 @@ const Jobseekers = () => {
           className={
             !isOpenFilter
               ? "hidden"
-              : " w-[60%] min-h-36 border rounded p-2  py-6 flex flex-col items-center justify-center gap-5"
+              : " w-[70%] min-h-36 border rounded p-2  py-6 flex flex-col items-center justify-center gap-5"
           }
         >
-          <div className="flex justify-between w-[80%]">
-            <div>
+          <div className="flex flex-col lg:flex-row lg:justify-between w-[80%]">
+            <div className="mb-4 lg:mb-0">
               <h1 className="pb-6 font-semibold"> Açar-kəlmələr ilə axtarış</h1>
               <input
-                className="border p-1 rounded w-72"
+                className="border p-1 rounded w-full lg:w-72"
                 onChange={(e) => setSearch(e.target.value)}
                 value={search}
                 placeholder="Ad və ya ixtisas üzrə axtar..."
                 type="text"
               />
             </div>
-            <div>
+            <div className="mb-4 lg:mb-0">
               <h1 className="pb-6 font-semibold"> minimum yaş</h1>
-
               <input
-                className="border p-1 rounded w-40"
+                className="border p-1 rounded w-full lg:w-40"
                 type="number"
                 onChange={handleMinAgeChange}
                 value={minAge}
@@ -109,9 +121,8 @@ const Jobseekers = () => {
             </div>
             <div>
               <h1 className="pb-6 font-semibold"> maksimum yaş</h1>
-
               <input
-                className="border p-1 rounded w-40"
+                className="border p-1 rounded w-full lg:w-40"
                 type="number"
                 onChange={handleMaxAgeChange}
                 value={maxAge}
@@ -120,6 +131,8 @@ const Jobseekers = () => {
               />
             </div>
           </div>
+
+
           <div className="w-[80%] flex justify-between py-4">
             <select
               className="border p-1 rounded w-72"
@@ -146,11 +159,25 @@ const Jobseekers = () => {
         {userStatus === "loading" ? (
           <Loading />
         ) : (
-          <div className="flex flex-wrap w-full justify-center">
-            {filteredElements().map((item) => {
-              return <Usercard key={item.id} props={item} />;
-            })}
-          </div>
+          <>
+            <div className="flex flex-wrap w-full justify-center">
+              {currentItems.map((item) => {
+                return <Usercard key={item.id} props={item} />;
+              })}
+            </div>
+            <div className="w-full justify-center items-center">
+              <ReactPaginate
+                className="paginateStyle"
+                breakLabel="..."
+                nextLabel={<MdOutlineNavigateNext />}
+                onPageChange={({ selected }) => handlePageClick(selected)}
+                pageRangeDisplayed={5}
+                pageCount={pageCount}
+                previousLabel={<MdOutlineNavigateBefore />}
+                renderOnZeroPageCount={null}
+              />
+            </div>
+          </>
         )}
       </div>
     </div>
