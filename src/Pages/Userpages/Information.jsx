@@ -73,6 +73,14 @@ const Information = () => {
             placeholder="E-mail adresinizi girin"
           />
         </div>
+        <div className="px-6">
+          <h5 className="py-3">İşləmək istədiyim sahə</h5>
+          <input
+            className="border p-2 rounded-sm w-full"
+            type="text"
+            placeholder="İşləmək istədiyim sahəni girin"
+          />
+        </div>
       </div>
       <div className="w-full flex justify-end items-center p-6 h-36">
         <button className="w-36 h-12 rounded-md text-white bg-gray-800">
